@@ -74,7 +74,7 @@ def tast_open():
     #articles = conn.execute(select([task_user]).order_by(desc(task_user.c.task_on))).fetchall()
     return render_template("task_open.html", articles=articles)
 
-# страница выполнения заданий
+# страница выполнения заданий.
 @app.route('/task_work', methods= ['POST', 'GET'])
 def tast_work2():
 
