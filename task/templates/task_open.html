@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Отрытые задания
+{% endblock%}
+
+{% block body %}
+<div class="container">
+    <h1>Открытые задачи</h1>
+    {% for el in articles if not el[3] %}
+
+    <div class="alert alert-info">
+        <h2>Исполнитель: {{ el.name }}</h2>
+        <p>Задание: {{ el.text }}</p>
+
+        <p><b>Дата открытия:> {{ el.task_on.date() }}</b></p>
+        <form method="post">
+            <a class="btn btn-success" href="/task_work">Взять в работу</a>
+            <a class="btn btn-danger" href="/task_open">Отменить</a>
+
+        </form>
+
+    </div>
+
+    {% endfor %}
+</div>
+{% endblock%}
