@@ -112,7 +112,7 @@ def adding_finish(id):
     return redirect('/task_open')
 
 
-# обработка нажатий на "Отменить"
+# обработка нажатий на кнопку "Отменить"
 @app.route('/task_cancell/<int:id>')
 def adding_cancell(id):
     task_cancell1 = datetime.now()
