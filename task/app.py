@@ -152,30 +152,20 @@ def stat():
             count_task_work += 1
 
     # расчет среднего времени выполнения задачи
-    #сount_time_job_sum = None
+    sum_time = 0
+    k = 0
     for i in articles:
-
-        if i[6]:
-            print(i[6])
-            task_time_job = i[6]-i[5]
-            print('Привет')
-            print(task_time_job)
-            temp = None
-            if task_time_job:
-                temp = task_time_job + task_time_job
-            print("temp", temp)
-            print('________')
-            print(task_time_job)
-            #print(сount_time_job_sum)
-            #s = task_user.update().values(task_time_job=task_time_job)
-            #conn = engine.connect()
-            #conn.execute(s)
-
+        if (i[6] and i[5]):
+            sum_time += int((i[6]-i[5]).total_seconds( ))
+            k +=1
+    if k <= 0:
+        srednie_time = (datetime(1970, 1, 1, 0, 0, 0)).time()
+    else:
+        srednie_time = datetime.fromtimestamp(int(sum_time/k)) - datetime(1970, 1, 1, 5, 0, 0)
 
     return render_template("stat.html", articles=articles, count_task_on=count_task_on,
-                           count_task_cancell=count_task_cancell, count_task_work=count_task_work)
-
-
+                               count_task_cancell=count_task_cancell,
+                               count_task_work=count_task_work, srednie_time=srednie_time)
 
 if __name__ == "__main__":
     app.run(debug=True)
