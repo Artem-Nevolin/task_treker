@@ -15,8 +15,8 @@
 
         <p><b>Дата открытия:> {{ el.task_on.date() }}</b></p>
         <form method="post">
-            <a class="btn btn-success" href="/task_work">Взять в работу</a>
-            <a class="btn btn-danger" href="/task_open">Отменить</a>
+            <a class="btn btn-success" href="/task_work/{{ el.id }}">Взять в работу</a>
+            <a class="btn btn-danger" href="/task_cancell/{{ el.id }}">Отменить</a>
 
         </form>
 

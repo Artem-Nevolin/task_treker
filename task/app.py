@@ -13,21 +13,21 @@ conn = engine.connect()
 #print(engine)
 
 # таблица регистрации
-registration_user = Table('registration', metadata,
+registration_user = Table('registration_user', metadata,
     Column('id', Integer(), primary_key=True),
     Column('login', String(15), nullable=False),
     Column('password', String(15), nullable=False)
 )
 
  # таблица создания новых заданий и отслеживания статуса
-task_user = Table('task_creat', metadata,
+task_user = Table('task_user', metadata,
     Column('id', Integer(), primary_key=True),
     Column('name', String(100), nullable=False),
     Column('text', String(), nullable=False),
     Column('status', String(), nullable=True),
     Column('task_on', DateTime(), default=datetime.now),
-    Column('task_work', DateTime(), default=None),
-    Column('task_of', DateTime(), default=None),
+    Column('task_work', DateTime()),
+    Column('task_of', DateTime()),
     Column('task_cancell', DateTime(), default=None)
 )
 metadata.create_all(engine)
@@ -54,7 +54,6 @@ def tast_creat():
     if request.method == "POST":  # TODO
         name1 = request.form.get('name')
         text1 = request.form.get('text')
-
         ins = task_user.insert()
         new_user = ins.values(name=name1, text=text1, status=None)
         conn = engine.connect()
@@ -93,11 +92,34 @@ def tast_work2():
         articles = r.fetchall()
     return render_template("task_work.html", articles=articles)
 
+# обработка нажатий на "Взять в работу"
+@app.route('/task_work/<int:id>')
+def adding(id):
+    task_work1 = datetime.now()
+    s = task_user.update().where(task_user.c.id == id).values(status='1', task_work=task_work1)
+    conn = engine.connect()
+    conn.execute(s)
+    return redirect('/task_open')
 
-@app.route('/user/<string:name>/<int:id>') # отслеживание странички user
-def user(name, id):
-    return "User page: " + name + " - " + str(id)
 
+# обработка нажатий на "Выполнено"
+@app.route('/task_finish/<int:id>')
+def adding_finish(id):
+    task_of1 = datetime.now()
+    s = task_user.update().where(task_user.c.id == id).values(status='2', task_of=task_of1)
+    conn = engine.connect()
+    conn.execute(s)
+    return redirect('/task_open')
+
+
+# обработка нажатий на "Отменить"
+@app.route('/task_cancell/<int:id>')
+def adding_cancell(id):
+    task_cancell1 = datetime.now()
+    s = task_user.update().where(task_user.c.id == id).values(status='2', task_cancell=task_cancell1)
+    conn = engine.connect()
+    conn.execute(s)
+    return redirect('/task_open')
 
 
 if __name__ == "__main__":
