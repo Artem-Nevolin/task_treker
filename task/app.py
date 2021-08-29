@@ -28,10 +28,10 @@ task_user = Table('task_user', metadata,
     Column('task_on', DateTime(), default=datetime.now),
     Column('task_work', DateTime()),
     Column('task_of', DateTime()),
-    Column('task_cancell', DateTime(), default=None)
+    Column('task_cancell', DateTime(), default=None),
+    Column('task_time_job', DateTime())
 )
 metadata.create_all(engine)
-
 
 # создание страницы регистрации
 @app.route('/', methods= ['POST', 'GET'])
@@ -43,8 +43,7 @@ def registration():
         new_user = ins.values(login = login1, password = password1)
         conn = engine.connect()
         conn.execute(new_user)
-        return render_template("task_creat.html")
-
+        return redirect("/task_creat")
     else:
         return render_template("registration.html")
 
@@ -58,7 +57,6 @@ def tast_creat():
         new_user = ins.values(name=name1, text=text1, status=None)
         conn = engine.connect()
         conn.execute(new_user)
-        #return render_template("task_open.html")
         return redirect('/task_open')
     else:
         return render_template("task_creat.html")
@@ -70,7 +68,6 @@ def tast_open():
     sel = select([task_user]).order_by(desc(task_user.c.task_on))
     r = conn.execute(sel)
     articles = r.fetchall()
-    #articles = conn.execute(select([task_user]).order_by(desc(task_user.c.task_on))).fetchall()
     return render_template("task_open.html", articles=articles)
 
 # страница выполнения заданий.
@@ -78,14 +75,11 @@ def tast_open():
 def tast_work2():
 
     if request.method == "POST":
-        print('if')
         conn = engine.connect()
-
         stm = task_user.update().values(status=None)
         conn.execute(stm)
         return render_template("task_work.html")
     else:
-        print('else')
         conn = engine.connect()
         sel = select([task_user]).order_by(desc(task_user.c.task_on))
         r = conn.execute(sel)
@@ -121,16 +115,66 @@ def adding_cancell(id):
     conn.execute(s)
     return redirect('/task_open')
 
-
+# страница с "Архив"
 @app.route('/backup')
 def backup_open():
     conn = engine.connect()
     sel = select([task_user]).order_by(desc(task_user.c.task_on))
     r = conn.execute(sel)
     articles = r.fetchall()
-    #articles = conn.execute(select([task_user]).order_by(desc(task_user.c.task_on))).fetchall()
-
     return render_template("backup.html", articles=articles)
+
+
+# страница "Статистика"
+@app.route('/stat')
+def stat():
+    conn = engine.connect()
+    sel = select([task_user]).order_by(desc(task_user.c.task_on))
+    r = conn.execute(sel)
+    articles = r.fetchall()
+
+    # расчет количества открытых задач
+    count_task_on = 0
+    for i in articles:
+        if not i[3] and i[4]:
+            count_task_on += 1
+
+    # расчет количества отмененных задач
+    count_task_cancell = 0
+    for i in articles:
+        if i[7]:
+            count_task_cancell += 1
+
+    # расчет количества открытых задач
+    count_task_work = 0
+    for i in articles:
+        if not i[6] and i[5]:
+            count_task_work += 1
+
+    # расчет среднего времени выполнения задачи
+    #сount_time_job_sum = None
+    for i in articles:
+
+        if i[6]:
+            print(i[6])
+            task_time_job = i[6]-i[5]
+            print('Привет')
+            print(task_time_job)
+            temp = None
+            if task_time_job:
+                temp = task_time_job + task_time_job
+            print("temp", temp)
+            print('________')
+            print(task_time_job)
+            #print(сount_time_job_sum)
+            #s = task_user.update().values(task_time_job=task_time_job)
+            #conn = engine.connect()
+            #conn.execute(s)
+
+
+    return render_template("stat.html", articles=articles, count_task_on=count_task_on,
+                           count_task_cancell=count_task_cancell, count_task_work=count_task_work)
+
 
 
 if __name__ == "__main__":

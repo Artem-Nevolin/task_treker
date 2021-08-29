@@ -1,0 +1,26 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+Статистика
+{% endblock%}
+
+{% block body %}
+<div class="container">
+    <h1>Статистика</h1>
+    {% for el in articles if el[3] %}
+
+    <div class="alert alert-info">
+
+
+        <p><b>Количество отрытых задач:> {{ count_task_on }} шт</b></p>
+        <p><b>Количество отмененных задач:> {{ count_task_cancell }} шт</b></p>
+        <p><b>Количество задач в работе:> {{ count_task_work }} шт</b></p>
+        <p><b>Среднее время выполнения задачи:> {{ el.task_cancell.strftime('%d-%m-%yг %H:%M:%S') if el[7] }}</b></p>
+
+
+    </div>
+
+    {% endfor %}
+</div>
+{% endblock%}
