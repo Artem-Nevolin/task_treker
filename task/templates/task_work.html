@@ -13,7 +13,8 @@
         <h2>Исполнитель: {{ el.name }}</h2>
         <p>Задание: {{ el.text }}</p>
 
-        <p><b>Дата открытия:> {{ el.task_on.date() }}</b></p>
+        <p><b>Дата открытия:> {{ el.task_on.strftime('%d-%m-%yг %H:%M:%S') }}</b></p>
+        <p><b>Дата и время взятия в работу:> {{ el.task_work.strftime('%d-%m-%yг %H:%M:%S') if el[5] }}</b></p>
         <form method="post">
             <a class="btn btn-success" href="/task_finish/{{ el.id }}">Выполнено</a>
         </form>

@@ -122,5 +122,16 @@ def adding_cancell(id):
     return redirect('/task_open')
 
 
+@app.route('/backup')
+def backup_open():
+    conn = engine.connect()
+    sel = select([task_user]).order_by(desc(task_user.c.task_on))
+    r = conn.execute(sel)
+    articles = r.fetchall()
+    #articles = conn.execute(select([task_user]).order_by(desc(task_user.c.task_on))).fetchall()
+
+    return render_template("backup.html", articles=articles)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
